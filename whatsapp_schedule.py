@@ -38,17 +38,34 @@ def init_driver():
         print("Ensure that the Chromedriver version matches the Chromium browser version.")
         driver = None
 
-# Function to send the message
-def send_whatsapp_message(contact_name, message):
+def open_whatsapp_web():
+    """
+    Opens WhatsApp Web and waits until it is fully loaded.
+    """
     try:
         if not driver:
             print("WebDriver is not initialized.")
-            return
+            return False
 
         driver.get("https://web.whatsapp.com")
-        print("Waiting for WhatsApp Web to load...")
-        time.sleep(8)  # Allow time for WhatsApp Web to load
+        print("Opening WhatsApp Web...")
 
+        # Wait until the search box is present, indicating WhatsApp Web is loaded
+        WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]'))
+        )
+        print("WhatsApp Web is loaded and ready.")
+        return True
+    except Exception as e:
+        print(f"An error occurred while opening WhatsApp Web: {e}")
+        return False
+
+# Function to send the message
+def send_whatsapp_message(contact_name, message):
+    """
+    Sends a WhatsApp message to the specified contact.
+    """
+    try:
         # Search for the contact
         search_box = driver.find_element(By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]')
         search_box.click()
@@ -65,18 +82,13 @@ def send_whatsapp_message(contact_name, message):
         time.sleep(5)
         print(f"Message sent to {contact_name}!")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while sending the message: {e}")
 
 def send_whatsapp_poll(contact_name, question, options):
+    """
+    Sends a WhatsApp poll to the specified contact.
+    """
     try:
-        if not driver:
-            print("WebDriver is not initialized.")
-            return
-
-        driver.get("https://web.whatsapp.com")
-        print("Waiting for WhatsApp Web to load...")
-        time.sleep(15)  # Allow time for WhatsApp Web to load
-
         # Search for the contact
         search_box = driver.find_element(By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]')
         search_box.click()
@@ -107,17 +119,11 @@ def send_whatsapp_poll(contact_name, question, options):
         time.sleep(2)
 
         # Fill in the poll options
-        for i, option in enumerate(options):
+        for i in range(2, len(options) + 2):
             option_box = driver.find_element(By.XPATH, f'(//div[@contenteditable="true"])[{i}]')
             option_box.click()
-            option_box.send_keys(option)
-            time.sleep(1)
-
-            # # Add a new option if there are more options to add
-            # if i < len(options) - 1:
-            #     add_option_button = driver.find_element(By.XPATH, '//span[@data-icon="add"]')
-            #     add_option_button.click()
-            #     time.sleep(1)
+            option_box.send_keys(options[i-2])
+            time.sleep(2)
 
         # Send the poll
         send_button = driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Send"]')
@@ -139,18 +145,19 @@ if __name__ == "__main__":
     time.sleep(2)
     # Example usage: send a message immediately
     if driver:
-        # send_whatsapp_message("Todd Moxley", "Hello! This is a test message.")
-        # print("Message sent!")
+        if open_whatsapp_web():
+            send_whatsapp_message("CONTACT NAME", "Hello! This is a test message.")
+            # print("Message sent!")
 
-        # Example usage: send a poll
-        send_whatsapp_poll(
-            "Todd Moxley",
-            "What is your favorite programming language?",
-            ["Python", "JavaScript", "C++", "Java"]
-        )
-        print("Poll sent!")
+            # Example usage: send a poll
+            send_whatsapp_poll(
+                "CONTACT NAME",
+                "What is your favorite programming language?",
+                ["Python", "JavaScript", "C++", "Java"]
+            )
+            print("Poll sent!")
 
-        # Quit the driver after sending the message and poll
-        # driver.quit()
+            # Quit the driver after sending the message and poll
+            # driver.quit()
     else:
         print("WebDriver was not initialized. Exiting.")

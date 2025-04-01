@@ -42,7 +42,7 @@ def start_driver_thread():
 if __name__ == "__main__":
     # Start the WebDriver in a separate thread
     start_driver_thread()
-
+    time.sleep(2)
     # Keep the script running to allow manual interaction
     print("WebDriver is ready. You can now interact with it manually.")
     print("Use the 'driver' object to execute commands.")
