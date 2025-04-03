@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Scheduler</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar .center-links {
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .navbar .title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer img {
+            height: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="title">
+            <img src="/static/favicon.ico" alt="Logo" style="height: 30px; vertical-align: middle;">
+            WhatsApp Scheduler
+        </div>
+        <div class="center-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('add_schedule') }}">Add Schedule</a>
+            <a href="{{ url_for('send_now') }}">Send Now</a>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Scheduled Messages and Polls</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    <th>Contact</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                    <th>Recurring</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, schedule in enumerate(schedules) %}
+                    <tr>
+                        <td>{{ i }}</td>
+                        <td>{{ schedule.type }}</td>
+                        <td>{{ schedule.contact }}</td>
+                        <td>
+                            {% if schedule.type == "message" %}
+                                {{ schedule.message }}
+                            {% elif schedule.type == "poll" %}
+                                Question: {{ schedule.question }}<br>
+                                Options: {{ schedule.options | join(", ") }}
+                            {% endif %}
+                        </td>
+                        <td>{{ schedule.time }}</td>
+                        <td>{{ schedule.recurring or "None" }}</td>
+                        <td>
+                            <a href="{{ url_for('delete_schedule', index=i) }}" class="button">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="how-to">
+            <h2>How to Use</h2>
+            <p>Welcome to the WhatsApp Scheduler! Here's how you can use this tool:</p>
+            <ul>
+                <li><strong>Add Schedule:</strong> Schedule a message or poll to be sent at a specific time.</li>
+                <li><strong>Send Now:</strong> Instantly send a message or poll to a contact.</li>
+                <li><strong>Overview:</strong> View all scheduled messages and polls in a detailed format.</li>
+                <li><strong>Delete:</strong> Remove a scheduled message or poll. You can undo this action immediately.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <img src="/static/favicon.ico" alt="Logo"> WhatsApp Scheduler
+    </div>
+</body>
+</html>

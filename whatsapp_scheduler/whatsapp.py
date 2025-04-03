@@ -8,18 +8,27 @@ class WhatsApp:
     def __init__(self, driver):
         self.driver = driver
 
-    def open_whatsapp_web(self):
-        try:
-            self.driver.get("https://web.whatsapp.com")
-            print("Opening WhatsApp Web...")
-            WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]'))
-            )
-            print("WhatsApp Web is loaded and ready.")
-            return True
-        except Exception as e:
-            print(f"An error occurred while opening WhatsApp Web: {e}")
-            return False
+    def open_whatsapp_web(self, max_retries=3):
+        """
+        Opens WhatsApp Web and waits until it is fully loaded. Reloads the page if it doesn't load within the timeout.
+        :param max_retries: Maximum number of retries to reload the page.
+        """
+        for attempt in range(max_retries):
+            try:
+                self.driver.get("https://web.whatsapp.com")
+                print(f"Opening WhatsApp Web... (Attempt {attempt + 1}/{max_retries})")
+                WebDriverWait(self.driver, 60).until(
+                    EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]'))
+                )
+                print("WhatsApp Web is loaded and ready.")
+                return True
+            except Exception as e:
+                print(f"An error occurred while opening WhatsApp Web: {e}")
+                if attempt < max_retries - 1:
+                    print("Reloading WhatsApp Web...")
+                else:
+                    print("Max retries reached. Failed to load WhatsApp Web.")
+        return False
 
     def send_message(self, contact_name, message):
         try:

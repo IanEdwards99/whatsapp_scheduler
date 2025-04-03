@@ -1,3 +1,10 @@
 [
-   
+    {
+        "type": "message",
+        "contact": "+31 6 87758933 (You)",
+        "message": "weeewaaaaa",
+        "time": "03/04/2025 21:45",
+        "recurring": "weekly",
+        "sent": false
+    }
 ]
