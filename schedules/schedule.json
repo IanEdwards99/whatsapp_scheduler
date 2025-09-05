@@ -1,1 +1,16 @@
-[]
+[
+    {
+        "type": "poll",
+        "contact": "+31 6 87758933 (You)",
+        "question": "Why",
+        "options": [
+            "Yes",
+            " No",
+            " Maybe",
+            " None"
+        ],
+        "time": "05/09/2025 19:18",
+        "recurring": "",
+        "sent": true
+    }
+]
